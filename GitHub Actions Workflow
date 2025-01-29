@@ -1,0 +1,24 @@
+yaml
+name: Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+    
+    - name: Build Contracts
+      run: |
+        cargo install --git https://github.com/MystenLabs/sui.git --branch devnet sui
+        sui move build --path contracts/ai_agent
+    
+    - name: Run Tests
+      run: sui move test --path contracts/ai_agent
